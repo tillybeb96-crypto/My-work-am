@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTN SuperApp - Professional Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --mtn-yellow: #FFCC00;
+            --mtn-blue: #004F9F;
+            --mtn-dark: #1a1a1a;
+            --bg-gray: #f8f9fa;
+            --white: #ffffff;
+            --success: #28a745;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--mtn-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- NAVIGATION --- */
+        nav.top-nav {
+            background: var(--mtn-yellow);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo-section img { height: 45px; cursor: pointer; }
+
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+
+        .nav-links span { font-weight: 700; color: var(--mtn-blue); cursor: pointer; }
+
+        /* --- MAIN CONTENT AREA --- */
+        main {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 2rem 5%;
+        }
+
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- DASHBOARD ELEMENTS --- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+        }
+
+        .balance-card { background: var(--mtn-blue); color: white; }
+        .balance-card h3 { opacity: 0.8; font-weight: 400; font-size: 0.9rem; }
+        .balance-card .amount { font-size: 2.5rem; margin: 10px 0; font-weight: 800; }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .btn-action {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .btn-action:hover { background: var(--mtn-yellow); border-color: var(--mtn-yellow); }
+        .btn-action i { font-size: 1.5rem; color: var(--mtn-blue); }
+
+        /* --- FORMS & UI --- */
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--mtn-yellow);
+            color: var(--mtn-dark);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        /* --- MOMO KEYPAD --- */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+
+        .key {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+
+        .key:active { background: #eee; }
+
+        /* --- RESPONSIVE FOOTER --- */
+        footer {
+            background: var(--white);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links span { display: none; } /* Hide text on mobile */
+            .nav-links i { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="logo-section" onclick="showView('home')">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/MTN_Logo.svg/800px-MTN_Logo.svg.png" alt="MTN">
+        </div>
+        <div class="nav-links">
+            <i class="fas fa-home" onclick="showView('home')"></i>
+            <span onclick="showView('bundles')">Bundles</span>
+            <span onclick="showView('send')">Send MoMo</span>
+            <span onclick="showView('settings')">Settings</span>
+            <div class="user-profile">
+                <i class="fas fa-user-circle fa-2x" style="color: var(--mtn-blue); cursor: pointer;"></i>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="view active">
+            <div class="dashboard-grid">
+                <div class="card balance-card">
+                    <h3>Total Airtime</h3>
+                    <p class="amount" id="mainAirtime">₵ 45.50</p>
+                    <p>Data Balance: <strong id="mainData">12.4 GB</strong></p>
+                </div>
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <div class="action-grid">
+                        <div class="btn-action" onclick="showView('airtime')">
+                            <i class="fas fa-phone"></i>
+                            <p>Buy Airtime</p>
+                        </div>
+                        <div class="btn-action" onclick="showView('bundles')">
+                            <i class="fas fa-wifi"></i>
+                            <p>Data Bundles</p>
+                        </div>
+                        <div class="btn-action" onclick="showView('send')">
+                            <i class="fas fa-paper-plane"></i>
+                            <p>Send Money</p>
+                        </div>
+                        <div class="btn-action" onclick="showView('settings')">
+                            <i class="fas fa-cog"></i>
+                            <p>Manage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="margin-bottom: 15px;">Recent Transactions</h3>
+            <div class="card">
+                <p style="color: #888; text-align: center; padding: 20px;">No recent transactions for today.</p>
+            </div>
+        </section>
+
+        <section id="bundles" class="view">
+            <h2>Select Data Bundle</h2>
+            <p style="margin-bottom: 20px;">Choose a package that fits your lifestyle.</p>
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h4>Daily Bundles</h4>
+                    <hr style="margin: 10px 0; opacity: 0.1;">
+                    <div class="form-group">
+                        <select id="dataOption">
+                            <option value="1">₵1.00 - 100MB (24hrs)</option>
+                            <option value="3">₵3.00 - 500MB (24hrs)</option>
+                            <option value="5">₵5.00 - 1.5GB (24hrs)</option>
+                            <option value="10">₵10.00 - 4GB (Weekly)</option>
+                            <option value="50">₵50.00 - 25GB (Monthly)</option>
+                            <option value="100">₵100.00 - 80GB (Monthly)</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="buyData()">Purchase Data Bundle</button>
+                </div>
+                <div class="card" style="border-left: 5px solid var(--mtn-blue);">
+                    <h4>Midnight Express</h4>
+                    <p>Unlimited data from 12AM - 5AM</p>
+                    <button class="btn-primary" style="background: var(--mtn-blue); color: white; margin-top: 15px;">Activate for ₵2</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="airtime" class="view">
+            <h2>Buy Airtime</h2>
+            <div class="card" style="max-width: 500px; margin: auto;">
+                <div class="form-group">
+                    <label>Enter Amount (₵)</label>
+                    <input type="number" id="airtimeAmount" placeholder="Min: 1.00">
+                </div>
+                <div class="form-group">
+                    <label>Select Recipient</label>
+                    <select>
+                        <option>My Number (024 XXX XXXX)</option>
+                        <option>Other Number</option>
+                    </select>
+                </div>
+                <button class="btn-primary" onclick="buyAirtime()">Top Up Now</button>
+            </div>
+        </section>
+
+        <section id="send" class="view">
+            <h2>MTN MoMo</h2>
+            <div class="card" style="max-width: 500px; margin: auto; text-align: center;">
+                <p>Enter MoMo Amount</p>
+                <div style="font-size: 2rem; font-weight: 800; margin: 20px 0; color: var(--mtn-blue);">
+                    ₵ <span id="momoDisplay">0</span>
+                </div>
+                <div class="keypad">
+                    <div class="key" onclick="pressKey(1)">1</div>
+                    <div class="key" onclick="pressKey(2)">2</div>
+                    <div class="key" onclick="pressKey(3)">3</div>
+                    <div class="key" onclick="pressKey(4)">4</div>
+                    <div class="key" onclick="pressKey(5)">5</div>
+                    <div class="key" onclick="pressKey(6)">6</div>
+                    <div class="key" onclick="pressKey(7)">7</div>
+                    <div class="key" onclick="pressKey(8)">8</div>
+                    <div class="key" onclick="pressKey(9)">9</div>
+                    <div class="key" style="color: red;" onclick="clearKey()">C</div>
+                    <div class="key" onclick="pressKey(0)">0</div>
+                    <div class="key" style="color: var(--success);" onclick="sendMoney()"><i class="fas fa-check"></i></div>
+                </div>
+                <input type="text" placeholder="Recipient Number" style="margin-top: 20px;">
+            </div>
+        </section>
+
+        <section id="settings" class="view">
+            <h2>Profile & Settings</h2>
+            <div class="card">
+                <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px;">
+                    <i class="fas fa-user-circle fa-4x" style="color: #ccc;"></i>
+                    <div>
+                        <h3>Student User</h3>
+                        <p>024 123 4567 • Tier 2 User</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" checked> Enable 2-Factor Authentication</label>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" checked> Receive SMS Notifications</label>
+                </div>
+                <button class="btn-primary" style="background: #eee;">Log Out</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        &copy; 2026 MTN Ghana. Everywhere you go.
+    </footer>
+
+    <script>
+        // Data Store
+        let airtimeBalance = 45.50;
+        let dataBalance = 12.4;
+        let momoAmount = "";
+
+        // Navigation Logic
+        function showView(viewId) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        // Purchase Logic
+        function buyAirtime() {
+            const amt = parseFloat(document.getElementById('airtimeAmount').value);
+            if(amt > 0) {
+                airtimeBalance += amt;
+                updateDisplay();
+                alert(`Success! ₵${amt} added to your airtime balance.`);
+                showView('home');
+            } else {
+                alert("Please enter a valid amount.");
+            }
+        }
+
+        function buyData() {
+            const select = document.getElementById('dataOption');
+            const dataToAdd = parseFloat(select.options[select.selectedIndex].text.split('- ')[1]);
+            const cost = parseFloat(select.value);
+
+            if(airtimeBalance >= cost) {
+                airtimeBalance -= cost;
+                dataBalance += dataToAdd;
+                updateDisplay();
+                alert(`Data Bundle Activated! ${dataToAdd}GB added.`);
+                showView('home');
+            } else {
+                alert("Insufficient Airtime! Please top up first.");
+            }
+        }
+
+        // MoMo Keypad Logic
+        function pressKey(num) {
+            momoAmount += num;
+            document.getElementById('momoDisplay').innerText = momoAmount;
+        }
+
+        function clearKey() {
+            momoAmount = "";
+            document.getElementById('momoDisplay').innerText = "0";
+        }
+
+        function sendMoney() {
+            if(momoAmount !== "") {
+                alert(`MoMo Transfer of ₵${momoAmount} initialized! Please enter your PIN on your phone.`);
+                clearKey();
+                showView('home');
+            }
+        }
+
+        function updateDisplay() {
+            document.getElementById('mainAirtime').innerText = `₵ ${airtimeBalance.toFixed(2)}`;
+            document.getElementById('mainData').innerText = `${dataBalance.toFixed(1)} GB`;
+        }
+    </script>
+</body>
+</html>
